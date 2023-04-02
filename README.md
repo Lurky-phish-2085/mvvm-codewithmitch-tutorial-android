@@ -1,3 +1,10 @@
+# WARNING!
+
+The tutorial contains legacy dependencies, that won't make it smooth for you to
+finish it.
+
+Stopped following the tutorial after this commit xD
+
 # HOW TO MVVM Android
 
 Based on this video tutorial
@@ -280,4 +287,71 @@ The activity will hold references to each views of it's corresponding layout
     }
 ```
 
+## Work on the ViewModel and the Activity utilizing it
 
+At this point, you would decide which data you like to display to the view.
+
+1. Create the class extending the `ViewModel` class under the `viewmodels`
+   package.
+
+As opposed to the tutorial were it names the view model after the activity that
+will use it, I would name my view model class after the object we are
+modelling. I found it more comfortable to look at.
+
+2. Declare a `MutableLiveData<List<NicePlace>>` variable and a getter for it
+   that returns a `LiveData<List<NicePlace>>` object.
+
+```java
+    private MutableLiveData<List<NicePlace>> nicePlaces;
+
+    public LiveData<List<NicePlace>> getNicePlaces() {
+        return nicePlaces;
+    }
+```
+
+`MutableLiveData` can be changed while `LiveData` can only be observed and get
+data from it.
+
+3. Declare and Initialize the `ViewModel` object on the activity.
+
+```java
+...
+NicePlaceViewModel nicePlaceViewModel;
+
+onCreate() {
+...
+    nicePlaceViewModel = new ViewModelProvider(this).get(NicePlaceViewModel.class);
+...
+}
+
+...
+```
+
+4. In the `onCreate()` method, add these after the initialization of the view
+   model.
+
+```java
+        nicePlaceViewModel.getNicePlaces().observe(this, new Observer<List<NicePlace>>() {
+            @Override
+            public void onChanged(List<NicePlace> nicePlaces) {
+                adapter.notifyDataSetChanged();
+            }
+```
+
+Every time the `LiveData` from the view model changes it will call the
+`notifyDataSetChanged()` method of the `RecyclerAdapter`.
+
+5. Change the initialization line of the `RecyclerAdapter`.
+
+```java
+adapter = new RecyclerAdapter(this, nicePlaceViewModel.getNicePlaces().getValue());
+```
+
+This would get the `List` object from the `LiveData` object of the view model.
+Then the adapter will use this as an array to put into the recycler view.
+
+## Create the Repository
+
+Once the view model and the activity are set up now to observe the changes and
+apply it to the view automatically, we should now look for the data that we
+will use.

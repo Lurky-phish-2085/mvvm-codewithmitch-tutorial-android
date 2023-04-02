@@ -230,3 +230,54 @@ Here is the `activity_main.xml` layout
                 .into(viewHolder.image);
     }
 ```
+
+## Prepare the skeleton MainActivity.java
+
+The activity will hold references to each views of it's corresponding layout
+`activity_main.xml` as well as initialize the recycler view.
+
+1. Declare the following views and initialize it in the `onCreate()` method.
+2. Declare the adapter as well but don't initialize it yet.
+
+```java
+    RecyclerView recyclerView;
+    FloatingActionButton floatingActionButton;
+    ProgressBar progressBar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        recyclerView = findViewById(R.id.recycler_view);
+        floatingActionButton = findViewById(R.id.fab);
+        progressBar = findViewById(R.id.progress_bar);
+    }
+```
+
+3. Create an `initRecyclerView()` method and call it from the `onCreate()`
+   method.
+
+```java
+    private void initRecyclerView() {
+        adapter = new RecyclerAdapter(this, new ArrayList<NicePlace>());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+    }
+```
+
+4. Add these two methods that is used for toggling the visibility of the
+   progress bar
+
+```java
+    private void showProgressBar() {
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+    }
+
+    private void hideProgressBar() {
+        progressBar.setVisibility(ProgressBar.GONE);
+    }
+```
+
+
